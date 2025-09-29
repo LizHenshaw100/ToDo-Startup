@@ -7,27 +7,33 @@
     <title>Simon HTML</title>
     <link rel="icon" href="favicon.ico" />
 
-    <main>
-      <h1>Welcome to ToDo List</h1>
-      <form method="get" action="list.html">
-        <div>
-          <span>@</span>
-          <input type="text" placeholder="your@email.com" />
-        </div>
-        <div>
-          <span>🔒</span>
-          <input type="password" placeholder="password" />
-        </div>
-        <button type="submit">Login</button>
-        <button type="submit">Create</button>
-      </form>
-    </main>
+    </head>
+    <link rel="stylesheet" href="style.css" />
+    <body>
+      <main>
+        <h1>Welcome to ToDo List</h1>
+        <p style="color:blue;">To log in, enter <strong>admin</strong> as the username and <strong>password123</strong> as the password.</p>
+        <form id="loginForm">
+          <div>
+            <span>@</span>
+            <input type="text" name="username" placeholder="your@email.com" />
+          </div>
+          <div>
+            <span>🔒</span>
+            <input type="password" name="password" placeholder="password" />
+          </div>
+          <button type="submit">Login</button>
+          <button type="submit">Create</button>
+        </form>
+        <div id="errorMsg" style="color:red;"></div>
+      </main>
 
     <footer>
       <hr />
-      <span class="text-reset">Author Name(s)</span>
+  <span class="text-reset">Liz Henshaw</span>
       <br />
-      <a href="https://github.com/webprogramming260/simon-html">GitHub</a>
+      <a href="https://github.com/LizHenshaw100/ToDo-Startup">ToDo-Startup GitHub</a>
     </footer>
+      <script src="testingjs.js"></script>
   </body>
 </html>
