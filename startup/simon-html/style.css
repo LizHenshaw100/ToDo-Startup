@@ -1,3 +1,16 @@
+/* Responsive images and main content */
+main img, .main-content img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 20px auto;
+}
+
+main, .main-content {
+	width: 100%;
+	max-width: 700px;
+	box-sizing: border-box;
+}
 /* Responsive styles for mobile devices */
 @media (max-width: 600px) {
 	header h1 {
