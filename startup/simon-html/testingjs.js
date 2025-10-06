@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Simulate login (replace with real authentication)
             if (username === 'admin' && password === 'password123') {
                 errorMsg.textContent = '';
-                window.location.href = 'list.html'; // Redirect on success
+                window.location.href = '../list/list.html'; // Redirect on success (fixed path from login folder)
             } else {
                 errorMsg.textContent = 'Invalid username or password.';
             }
