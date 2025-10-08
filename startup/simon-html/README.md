@@ -81,3 +81,8 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 - [x] **Login placeholder** - Placeholder for auth on the login page.
 - [x] **DB data placeholder** - High scores displayed on scores page.
 - [x] **WebSocket placeholder** - The play page has a text area that will show what other user notifications.
+
+
+
+
+With the react section, I added .jsx files for my footer and header, for my friends_list page, for my about page, for my list page, and for my login page. React was difficult to work with because it wanted the file names to be capitalized. I had to debug many errors due to this feature.
