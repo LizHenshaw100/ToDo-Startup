@@ -86,3 +86,8 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 
 With the react section, I added .jsx files for my footer and header, for my friends_list page, for my about page, for my list page, and for my login page. React was difficult to work with because it wanted the file names to be capitalized. I had to debug many errors due to this feature.
+
+
+## React PArt 2
+
+For react part 2 I added the list functionality so that I can add and cross off things. I also downloaded something from a library that allowed me to add the confetti. I also fixed some file organization and uploaded it all to GitHub.
