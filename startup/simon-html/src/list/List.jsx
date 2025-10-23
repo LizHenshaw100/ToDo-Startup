@@ -2,11 +2,37 @@ import React, { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "../style.css";
+import confetti from "canvas-confetti";
 
 export default function List() {
   const [items, setItems] = useState(["Thing 1", "Thing 2", "Thing 3"]);
   const [newItem, setNewItem] = useState("");
   const [completed, setCompleted] = useState([]);
+
+  // 🎉 Confetti burst from both corners
+  const fireConfetti = () => {
+    const duration = 500;
+    const end = Date.now() + duration;
+
+    const shoot = () => {
+      // Left bottom corner
+      confetti({
+        particleCount: 10,
+        startVelocity: 30,
+        spread: 70,
+        origin: { x: 0, y: 1 },
+      });
+      // Right bottom corner
+      confetti({
+        particleCount: 10,
+        startVelocity: 30,
+        spread: 70,
+        origin: { x: 1, y: 1 },
+      });
+      if (Date.now() < end) requestAnimationFrame(shoot);
+    };
+    shoot();
+  };
 
   const handleAdd = () => {
     if (newItem.trim() === "") return;
@@ -15,16 +41,17 @@ export default function List() {
   };
 
   const toggleComplete = (item) => {
+    const alreadyCompleted = completed.includes(item);
     setCompleted((prev) =>
-      prev.includes(item)
-        ? prev.filter((i) => i !== item)
-        : [...prev, item]
+      alreadyCompleted ? prev.filter((i) => i !== item) : [...prev, item]
     );
+    if (!alreadyCompleted) fireConfetti(); // celebrate completion
   };
 
   const handleDelete = (item) => {
     setItems(items.filter((i) => i !== item));
     setCompleted(completed.filter((i) => i !== item));
+    fireConfetti(); // celebrate deletion
   };
 
   const handleKeyDown = (e) => {
