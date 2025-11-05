@@ -1,85 +1,135 @@
+// src/login/Index.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // <-- import this
+import { useNavigate } from "react-router-dom";
 import "./login.css";
 
-export default function Login() {
-  const [error, setError] = useState("");
-  const navigate = useNavigate(); // <-- create navigate function
+function Footer() {
+  return (
+    <footer style={{ textAlign: "center", marginTop: "2rem" }}>
+      <hr />
+      <p><strong>Liz Henshaw</strong></p>
+      <a
+        href="https://github.com/LizHenshaw100/ToDo-Startup"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        ToDo-Startup GitHub
+      </a>
+    </footer>
+  );
+}
 
-  const handleSubmit = (e) => {
+function Login() {
+  const [error, setError] = useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const username = formData.get("username");
     const password = formData.get("password");
 
-    if (username === "admin" && password === "password123") {
-      setError(""); 
-      // redirect to /list after successful login
-      navigate("/list");
-    } else {
-      setError("❌ Invalid username or password");
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+      if (res.ok) {
+        setError("");
+        // Redirect to list page on successful login
+        navigate("/list");
+      } else {
+        const data = await res.json();
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      setError("Network error");
     }
   };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const username = formData.get("username");
+    const password = formData.get("password");
+
+    try {
+      const res = await fetch("/api/auth/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await res.json();
+      setMessage(data.message || "User created");
+      // Switch back to login after successful registration
+      if (res.ok) {
+        setTimeout(() => setIsRegistering(false), 2000);
+      }
+    } catch (err) {
+      setMessage("Network error");
+    }
+  };
+
+  if (isRegistering) {
+    return (
+      <>
+        <main>
+          <h2>Register</h2>
+          <form onSubmit={handleRegister}>
+            <input type="text" name="username" placeholder="Username" required />
+            <input type="password" name="password" placeholder="Password" required />
+            <button type="submit">Create Account</button>
+          </form>
+          {message && <div style={{ color: message.includes("error") ? "red" : "green" }}>{message}</div>}
+          <p>
+            Already have an account?{" "}
+            <button 
+              type="button" 
+              onClick={() => setIsRegistering(false)}
+              style={{ background: "none", border: "none", color: "blue", textDecoration: "underline", cursor: "pointer" }}
+            >
+              Login here
+            </button>
+          </p>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
       <main>
-        <h1
-          style={{
-            color: "#1E88E5",
-            fontSize: "2.5rem",
-            fontFamily: "'Segoe UI','Arial Rounded MT Bold',Arial,sans-serif",
-            textAlign: "center",
-            marginBottom: "1rem",
-            textShadow:
-              "1px 2px 8px rgba(25,118,210,0.10), 0 1px 0 #fff",
-          }}
-        >
-          ToDo List
-        </h1>
-        <p
-          style={{
-            color: "#1E88E5",
-            textAlign: "center",
-            marginTop: "0.5rem",
-          }}
-        >
-          To log in, enter <strong>admin</strong> as the username and{" "}
-          <strong>password123</strong> as the password.
-        </p>
-
-        <form id="loginForm" onSubmit={handleSubmit}>
+        <h1>ToDo List</h1>
+        <form onSubmit={handleLogin}>
           <div>
             <span>@</span>
-            <input type="text" name="username" placeholder="your@email.com" />
+            <input type="text" name="username" placeholder="your@email.com" required />
           </div>
           <div>
             <span>🔒</span>
-            <input type="password" name="password" placeholder="password" />
+            <input type="password" name="password" placeholder="password" required />
           </div>
           <button type="submit">Login</button>
-          <button type="button">Create</button>
         </form>
-
-        {error && <div id="errorMsg" style={{ color: "red" }}>{error}</div>}
-      </main>
-
-      <footer>
-        <hr />
-        <p
-          style={{
-            color: "#fff",
-            textAlign: "center",
-            marginTop: "0.5rem",
-          }}
-        >
-          <strong>Liz Henshaw</strong>
+        {error && <div style={{ color: "red" }}>{error}</div>}
+        <p>
+          Don't have an account?{" "}
+          <button 
+            type="button" 
+            onClick={() => setIsRegistering(true)}
+            style={{ background: "none", border: "none", color: "blue", textDecoration: "underline", cursor: "pointer" }}
+          >
+            Register here
+          </button>
         </p>
-        <br />
-        <a href="https://github.com/LizHenshaw100/ToDo-Startup">
-          ToDo-Startup GitHub
-        </a>
-      </footer>
+      </main>
+      <Footer />
     </>
   );
 }
+
+export default Login;  // THIS LINE IS CRITICAL!
