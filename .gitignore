@@ -1,0 +1,30 @@
+# Node
+node_modules/
+**/node_modules/
+
+# Build output
+dist/
+build/
+.vite/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Services and generated folders
+simonService/
+mongo/
+git-repository/
+
+# Local files
+testingjs.js
+notes.md
