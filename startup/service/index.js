@@ -68,10 +68,20 @@ app.get("/api/test", (req, res) => {
   res.json({ message: "Service working!" });
 });
 
+app.get("/api/quote", async (req, res) => {
+  try {
+    const response = await fetch("https://api.quotable.io/random");
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch quote" });
+  }
+});
+
 // ------------------------
 // Serve React frontend
 // ------------------------
-const DIST_PATH = path.join(__dirname, "dist");
+const DIST_PATH = path.join(__dirname, "../dist");
 app.use(express.static(DIST_PATH));
 
 // SIMPLE CATCH-ALL: Serve index.html for any route that's not an API route

@@ -91,3 +91,7 @@ With the react section, I added .jsx files for my footer and header, for my frie
 ## React PArt 2
 
 For react part 2 I added the list functionality so that I can add and cross off things. I also downloaded something from a library that allowed me to add the confetti. I also fixed some file organization and uploaded it all to GitHub.
+
+## Service
+
+Wow, I did a lot. I set up my third party service call so now I have jokes! I also set up my login so that it works with my front end and back end. I also added a restricted endpoint. And I fixed my picture.
