@@ -1,8 +1,0 @@
-{
-  "hostname": "cluster0.ajbusue.mongodb.net",
-  "userName": "elizabethhenshaw170_db_user",
-  "password": "%23Sunshine212",
-  "dbName": "startup_service",
-  "mongoUri": "mongodb+srv://elizabethhenshaw170_db_user:%23Sunshine212@cluster0.ajbusue.mongodb.net/startup?retryWrites=true&w=majority"
-}
-
