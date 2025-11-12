@@ -3,8 +3,27 @@ const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
+const { connectToDatabase, getDb } = require("./database");
+
 
 const app = express();
+let db;
+
+connectToDatabase()
+  .then((database) => {
+    db = database;
+    console.log("✅ Connected to MongoDB");
+
+    app.listen(port, () => {
+      console.log(`Service started on port ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error("❌ Failed to connect to MongoDB", err);
+    process.exit(1);
+  });
+
+
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
 
 // ------------------------
@@ -14,10 +33,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 // ------------------------
-// In-memory user storage
+// Data base memory
 // ------------------------
-const users = [];
-const findUser = (username) => users.find((u) => u.username === username);
+const findUser = async (username) => {
+  return await db.collection("users").findOne({ username });
+};
 
 // ------------------------
 // Auth endpoints
@@ -27,18 +47,21 @@ const findUser = (username) => users.find((u) => u.username === username);
 app.post("/api/auth/create", async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ message: "Missing fields" });
-  if (findUser(username)) return res.status(400).json({ message: "User already exists" });
+
+  const existing = await findUser(username);
+  if (existing) return res.status(400).json({ message: "User already exists" });
 
   const passwordHash = await bcrypt.hash(password, 10);
   const id = uuidv4();
-  users.push({ id, username, passwordHash });
+  await db.collection("users").insertOne({ id, username, passwordHash });
   res.json({ message: "User created", id, username });
 });
+
 
 // Login
 app.post("/api/auth/login", async (req, res) => {
   const { username, password } = req.body;
-  const user = findUser(username);
+  const user = await findUser(username);
   if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
   const valid = await bcrypt.compare(password, user.passwordHash);
@@ -48,6 +71,7 @@ app.post("/api/auth/login", async (req, res) => {
   res.json({ message: "Logged in" });
 });
 
+
 // Logout
 app.post("/api/auth/logout", (req, res) => {
   res.clearCookie("auth");
@@ -55,13 +79,13 @@ app.post("/api/auth/logout", (req, res) => {
 });
 
 // Secret endpoint
-app.get("/api/secret", (req, res) => {
+app.get("/api/secret", async (req, res) => {
   const userId = req.cookies.auth;
-  if (!userId || !users.find((u) => u.id === userId)) {
-    return res.status(401).json({ message: "Access denied" });
-  }
+  const user = await db.collection("users").findOne({ id: userId });
+  if (!user) return res.status(401).json({ message: "Access denied" });
   res.json({ message: "This is a secret message for authenticated users only!" });
 });
+
 
 // Test endpoint
 app.get("/api/test", (req, res) => {
@@ -77,6 +101,34 @@ app.get("/api/quote", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch quote" });
   }
 });
+
+// ------------------------
+// To-Do list endpoints
+// ------------------------
+
+app.get("/api/todos", async (req, res) => {
+  const userId = req.cookies.auth;
+  if (!userId) return res.status(401).json({ message: "Not authenticated" });
+
+  const doc = await db.collection("todos").findOne({ userId });
+  res.json(doc ? doc.items : []);
+});
+
+app.post("/api/todos", async (req, res) => {
+  const userId = req.cookies.auth;
+  if (!userId) return res.status(401).json({ message: "Not authenticated" });
+
+  const { items } = req.body;
+  await db
+    .collection("todos")
+    .updateOne(
+      { userId },
+      { $set: { items } },
+      { upsert: true } // create if not exists
+    );
+  res.json({ message: "Saved" });
+});
+
 
 // ------------------------
 // Serve React frontend
