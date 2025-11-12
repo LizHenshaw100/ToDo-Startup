@@ -7,7 +7,6 @@ import confetti from "canvas-confetti";
 export default function List() {
   const [items, setItems] = useState(["Thing 1", "Thing 2", "Thing 3"]);
   const [newItem, setNewItem] = useState("");
-  const [completed, setCompleted] = useState([]);
 
   // 🎉 Confetti burst from both corners
   const fireConfetti = () => {
@@ -40,17 +39,8 @@ export default function List() {
     setNewItem("");
   };
 
-  const toggleComplete = (item) => {
-    const alreadyCompleted = completed.includes(item);
-    setCompleted((prev) =>
-      alreadyCompleted ? prev.filter((i) => i !== item) : [...prev, item]
-    );
-    if (!alreadyCompleted) fireConfetti(); // celebrate completion
-  };
-
   const handleDelete = (item) => {
     setItems(items.filter((i) => i !== item));
-    setCompleted(completed.filter((i) => i !== item));
     fireConfetti(); // celebrate deletion
   };
 
@@ -72,33 +62,30 @@ export default function List() {
             <li
               key={index}
               className="player-name"
-              onClick={() => toggleComplete(item)}
               style={{
-                textDecoration: completed.includes(item)
-                  ? "line-through"
-                  : "none",
-                color: completed.includes(item) ? "gray" : "inherit",
-                cursor: "pointer",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "0.4rem 0",
+                borderBottom: "1px solid #eee",
               }}
             >
-              {item}{" "}
+              <span>{item}</span>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(item);
-                }}
+                onClick={() => handleDelete(item)}
                 style={{
-                  marginLeft: "0.5rem",
                   background: "transparent",
                   border: "none",
                   color: "red",
                   cursor: "pointer",
+                  fontSize: "1.1rem",
                 }}
               >
                 ❌
               </button>
             </li>
           ))}
+
         </ul>
 
         <div style={{ marginTop: "1rem" }}>
